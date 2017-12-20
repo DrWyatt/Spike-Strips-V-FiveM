@@ -13,10 +13,6 @@ namespace Spike_Strips_V
         public async void Checks(string pluginAcronym)
         {
             pluginName = pluginAcronym;
-            EventHandlers.Add(pluginName + ":isCop", new Action(IsCop));
-            EventHandlers.Add(pluginName + ":isNotCop", new Action(IsNotCop));
-            EventHandlers.Add(pluginName + ":isAdmin", new Action(IsAdmin));
-            EventHandlers.Add(pluginName + ":isNotAdmin", new Action(IsNotAdmin));
             while (true)
             {
                 await Delay(1000);

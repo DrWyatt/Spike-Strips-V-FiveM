@@ -105,6 +105,7 @@ namespace Spike_Strips_V
         private async void CreateSSpikeStrips()
         {
             Ped playerPed = LocalPlayer.Character;
+            PlayKneelAnim(2000);
             Vector3 playerPos = playerPed.Position;
             Vector3 playerForwardVector = playerPed.ForwardVector;
             float playerHeading = playerPed.Heading;
@@ -115,6 +116,7 @@ namespace Spike_Strips_V
                 const float SeparationBetweenStingers = 3.7f;
                 SpikeStrip s = await SpikeStrip.Create(playerPos + playerForwardVector * (SeparationFromPlayer + (SeparationBetweenStingers * i)), playerHeading);
                 SpikesStrips.Add(s);
+                await Delay(500);
             }
             Screen.ShowNotification("~g~Deployed 1 spike strip!", true);
         }
@@ -122,6 +124,7 @@ namespace Spike_Strips_V
         private async void CreateSpikeStrips()
         {
             Ped playerPed = LocalPlayer.Character;
+            PlayKneelAnim(4000);
             Vector3 playerPos = playerPed.Position;
             Vector3 playerForwardVector = playerPed.ForwardVector;
             float playerHeading = playerPed.Heading;
@@ -133,23 +136,37 @@ namespace Spike_Strips_V
 
                 SpikeStrip s = await SpikeStrip.Create(playerPos + playerForwardVector * (SeparationFromPlayer + (SeparationBetweenStingers * i)), playerHeading);
                 SpikesStrips.Add(s);
+                await Delay(500);
             }
             Screen.ShowNotification("~g~Deployed 2 spike strips!", true);
         }
 
-        private void DeleteAllSpikeStrips()
+        private async void DeleteAllSpikeStrips()
         {
             if (SpikesStrips.Count != 0)
             {
-                for (int i = 0; i < SpikesStrips.Count; i++)
+                PlayKneelAnim(SpikesStrips.Count * 500);
+                for (int i = SpikesStrips.Count; i --> 0; )
                 {
                     SpikesStrips[i].Prop.Delete();
+                    SpikesStrips.Remove(SpikesStrips[i]);
+                    await Delay(500);
                 }
                 SpikesStrips.Clear();
                 Screen.ShowNotification("~r~Removed spike strips!", true);
             }
             else
                 Screen.ShowNotification("~r~No spike strips deployed!", true);
+        }
+
+        public static void PlayKneelAnim(int duration)
+        {
+            if (!DoesEntityExist(GetPlayerPed(PlayerId())))
+                return;
+            if (IsPedArmed(GetPlayerPed(PlayerId()), 7))
+                SetCurrentPedWeapon(GetPlayerPed(PlayerId()), 0xA2719263, true);
+            AnimationFlags flags = AnimationFlags.None;
+            Game.PlayerPed.Task.PlayAnimation("amb@medic@standing@kneel@idle_a", "idle_a", 10, duration, flags);
         }
 
         public class SpikeStrip
@@ -242,7 +259,7 @@ namespace Spike_Strips_V
                 };
                 s.Prop.Heading = heading;
                 return s;
-            }
+            }            
         }
     }
 }
